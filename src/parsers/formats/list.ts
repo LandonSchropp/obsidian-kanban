@@ -106,8 +106,8 @@ export function listItemToItemData(stateManager: StateManager, md: string, item:
       fileMetadata: undefined,
       fileMetadataOrder: undefined,
     },
-    checked: item.checked,
-    checkChar: item.checked ? item.checkChar || ' ' : ' ',
+    checked: (item.checkChar || ' ') !== ' ',
+    checkChar: item.checkChar || ' ',
   };
 
   visit(
