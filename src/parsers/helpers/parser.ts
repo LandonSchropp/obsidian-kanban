@@ -33,7 +33,7 @@ export function replaceBrs(str: string) {
 
 export function indentNewLines(str: string) {
   const useTab = (app.vault as any).getConfig('useTab');
-  return str.trim().replace(/(?:\r\n|\n)/g, useTab ? '\n\t' : '\n    ');
+  return str.trim().replace(/(?:\r\n|\n)/g, useTab ? '\n\t' : '\n  ');
 }
 
 export function addBlockId(str: string, item: Item) {
@@ -54,7 +54,7 @@ export function removeBlockId(str: string) {
 }
 
 export function dedentNewLines(str: string) {
-  return str.trim().replace(/(?:\r\n|\n)(?: {4}|\t)/g, '\n');
+  return str.trim().replace(/(?:\r\n|\n)(?: {2}|\t)/g, '\n');
 }
 
 export function parseLaneTitle(str: string) {
