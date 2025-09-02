@@ -106,6 +106,7 @@ export const ItemCheckbox = memo(function ItemCheckbox({
           className="task-list-item-checkbox"
           checked={item.data.checked}
           data-task={item.data.checkChar}
+          disabled={true}
         />
       )}
       {(isCtrlHoveringCheckbox || (!shouldShowCheckbox && shouldMarkItemsComplete)) && (

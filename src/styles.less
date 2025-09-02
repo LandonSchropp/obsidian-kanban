@@ -13,6 +13,18 @@
 
 .kanban-plugin {
   --lane-width: 272px;
+  
+  // Disable hover effects on disabled checkboxes
+  .task-list-item-checkbox:disabled {
+    cursor: default !important;
+    pointer-events: none !important;
+  }
+  
+  .task-list-item-checkbox:disabled:hover {
+    background: inherit !important;
+    border-color: inherit !important;
+    box-shadow: none !important;
+  }
 }
 
 .kanban-plugin {
