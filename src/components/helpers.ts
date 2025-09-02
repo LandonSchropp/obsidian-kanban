@@ -15,6 +15,20 @@ import {
 import { SearchContextProps } from './context';
 import { Board, DataKey, DateColor, Item, Lane, PageData, TagColor } from './types';
 
+// Mapping of lane titles to checkbox characters
+function getLaneCheckboxChar(laneTitle: string): string | null {
+  const title = laneTitle.toLowerCase().trim();
+
+  if (title.includes('backlog')) return '<';
+  if (title.includes('block')) return '?';
+  if (title.includes('to-do') || title.includes('todo')) return ' ';
+  if (title.includes('progress')) return '/';
+  if (title.includes('done') || title.includes('complete')) return 'x';
+  if (title.includes('cancel')) return '-';
+
+  return null; // No match found
+}
+
 export const baseClassName = 'kanban-plugin';
 
 export function noop() {}
@@ -45,6 +59,24 @@ export function maybeCompleteForMove(
   const sourceParent = getEntityFromPath(sourceBoard, sourcePath.slice(0, -1));
   const destinationParent = getEntityFromPath(destinationBoard, destinationPath.slice(0, -1));
 
+  // First check for lane-based checkbox assignment
+  const destinationLaneTitle = destinationParent?.data?.title;
+  if (destinationLaneTitle) {
+    const newCheckChar = getLaneCheckboxChar(destinationLaneTitle);
+    if (newCheckChar !== null && newCheckChar !== item.data.checkChar) {
+      // Update item with new checkbox character based on lane
+      return {
+        next: update(item, {
+          data: {
+            checkChar: { $set: newCheckChar },
+            checked: { $set: newCheckChar === 'x' },
+          },
+        }),
+      };
+    }
+  }
+
+  // Fallback to original shouldMarkItemsComplete logic for compatibility
   const oldShouldComplete = sourceParent?.data?.shouldMarkItemsComplete;
   const newShouldComplete = destinationParent?.data?.shouldMarkItemsComplete;
 
