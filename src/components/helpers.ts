@@ -22,6 +22,7 @@ export function getLaneCheckboxChar(laneTitle: string): string | null {
   if (title.includes('backlog')) return '<';
   if (title.includes('block')) return '?';
   if (title.includes('to-do') || title.includes('todo')) return ' ';
+  if (title.includes('deck') || title.includes('next')) return '>';
   if (title.includes('progress')) return '/';
   if (title.includes('done') || title.includes('complete')) return 'x';
   if (title.includes('cancel')) return '-';
