@@ -16,7 +16,7 @@ import { SearchContextProps } from './context';
 import { Board, DataKey, DateColor, Item, Lane, PageData, TagColor } from './types';
 
 // Mapping of lane titles to checkbox characters
-function getLaneCheckboxChar(laneTitle: string): string | null {
+export function getLaneCheckboxChar(laneTitle: string): string | null {
   const title = laneTitle.toLowerCase().trim();
 
   if (title.includes('backlog')) return '<';
@@ -69,7 +69,7 @@ export function maybeCompleteForMove(
         next: update(item, {
           data: {
             checkChar: { $set: newCheckChar },
-            checked: { $set: newCheckChar === 'x' },
+            checked: { $set: newCheckChar !== ' ' },
           },
         }),
       };

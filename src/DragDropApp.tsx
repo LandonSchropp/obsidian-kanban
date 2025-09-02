@@ -6,7 +6,7 @@ import { KanbanView } from './KanbanView';
 import { DraggableItem } from './components/Item/Item';
 import { DraggableLane } from './components/Lane/Lane';
 import { KanbanContext } from './components/context';
-import { c, maybeCompleteForMove } from './components/helpers';
+import { c, getLaneCheckboxChar, maybeCompleteForMove } from './components/helpers';
 import { Board, DataTypes, Item, Lane } from './components/types';
 import { DndContext } from './dnd/components/DndContext';
 import { DragOverlay } from './dnd/components/DragOverlay';
@@ -54,6 +54,19 @@ export function DragDropApp({ win, plugin }: { win: Window; plugin: KanbanPlugin
         try {
           const items: Item[] = data.content.map((title: string) => {
             let item = stateManager.getNewItem(title, ' ');
+
+            // Use lane-based checkbox assignment
+            const newCheckChar = getLaneCheckboxChar(destinationParent?.data?.title || '');
+            if (newCheckChar !== null) {
+              return update(item, {
+                data: {
+                  checkChar: { $set: newCheckChar },
+                  checked: { $set: newCheckChar !== ' ' },
+                },
+              });
+            }
+
+            // Fallback to original logic
             const isComplete = !!destinationParent?.data?.shouldMarkItemsComplete;
 
             if (isComplete) {
