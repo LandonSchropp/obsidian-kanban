@@ -1,5 +1,13 @@
 # Obsidian Kanban Plugin
 
+> [!WARNING]
+> This fork was created purely for my own use. I'm not maintaining this outside of the few
+> modifications I needed for my own workflow.
+>
+> All changes were vibe-coded, and many are probably not maintainble.
+>
+> You're welcome to use this, but don't expect much to > change.
+
 Create markdown-backed Kanban boards in [Obsidian](https://obsidian.md/)
 
 - [Bugs, Issues, & Feature Requests](https://github.com/mgmeyers/obsidian-kanban/issues)
