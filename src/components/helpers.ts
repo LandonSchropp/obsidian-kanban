@@ -5,12 +5,7 @@ import { StateUpdater, useMemo } from 'preact/hooks';
 import { StateManager } from 'src/StateManager';
 import { Path } from 'src/dnd/types';
 import { getEntityFromPath } from 'src/dnd/util/data';
-import {
-  InlineField,
-  getTaskStatusDone,
-  getTaskStatusPreDone,
-  toggleTask,
-} from 'src/parsers/helpers/inlineMetadata';
+import { InlineField } from 'src/parsers/helpers/inlineMetadata';
 
 import { SearchContextProps } from './context';
 import { Board, DataKey, DateColor, Item, Lane, PageData, TagColor } from './types';
@@ -32,7 +27,7 @@ export function getLaneCheckboxChar(laneTitle: string): string | null {
 
 export const baseClassName = 'kanban-plugin';
 
-export function noop() {}
+export function noop() { }
 
 const classCache = new Map<string, string>();
 export function c(className: string) {
@@ -57,15 +52,13 @@ export function maybeCompleteForMove(
   destinationPath: Path,
   item: Item
 ): { next: Item; replacement?: Item } {
-  const sourceParent = getEntityFromPath(sourceBoard, sourcePath.slice(0, -1));
   const destinationParent = getEntityFromPath(destinationBoard, destinationPath.slice(0, -1));
 
-  // First check for lane-based checkbox assignment
+  // Use lane-based checkbox assignment
   const destinationLaneTitle = destinationParent?.data?.title;
   if (destinationLaneTitle) {
     const newCheckChar = getLaneCheckboxChar(destinationLaneTitle);
     if (newCheckChar !== null && newCheckChar !== item.data.checkChar) {
-      // Update item with new checkbox character based on lane
       return {
         next: update(item, {
           data: {
@@ -77,53 +70,7 @@ export function maybeCompleteForMove(
     }
   }
 
-  // Fallback to original shouldMarkItemsComplete logic for compatibility
-  const oldShouldComplete = sourceParent?.data?.shouldMarkItemsComplete;
-  const newShouldComplete = destinationParent?.data?.shouldMarkItemsComplete;
-
-  // If neither the old or new lane set it complete, leave it alone
-  if (!oldShouldComplete && !newShouldComplete) return { next: item };
-
-  const isComplete = item.data.checked && item.data.checkChar === getTaskStatusDone();
-
-  // If it already matches the new lane, leave it alone
-  if (newShouldComplete === isComplete) return { next: item };
-
-  if (newShouldComplete) {
-    item = update(item, { data: { checkChar: { $set: getTaskStatusPreDone() } } });
-  }
-
-  const updates = toggleTask(item, destinationStateManager.file);
-
-  if (updates) {
-    const [itemStrings, checkChars, thisIndex] = updates;
-    let next: Item;
-    let replacement: Item;
-
-    itemStrings.forEach((str, i) => {
-      if (i === thisIndex) {
-        next = destinationStateManager.getNewItem(str, checkChars[i]);
-      } else {
-        replacement = destinationStateManager.getNewItem(str, checkChars[i]);
-      }
-    });
-
-    return { next, replacement };
-  }
-
-  // It's different, update it
-  return {
-    next: update(item, {
-      data: {
-        checked: {
-          $set: newShouldComplete,
-        },
-        checkChar: {
-          $set: newShouldComplete ? getTaskStatusDone() : ' ',
-        },
-      },
-    }),
-  };
+  return { next: item };
 }
 
 export function useIMEInputProps() {
@@ -357,16 +304,16 @@ export function parseMetadataWithOptions(data: InlineField, metadataKeys: DataKe
 
   return options
     ? {
-        ...options,
-        value: data.value,
-      }
+      ...options,
+      value: data.value,
+    }
     : {
-        containsMarkdown: false,
-        label: data.key,
-        metadataKey: data.key,
-        shouldHideLabel: false,
-        value: data.value,
-      };
+      containsMarkdown: false,
+      label: data.key,
+      metadataKey: data.key,
+      shouldHideLabel: false,
+      value: data.value,
+    };
 }
 
 export function useOnMount(refs: RefObject<HTMLElement>[], cb: () => void, onUnmount?: () => void) {

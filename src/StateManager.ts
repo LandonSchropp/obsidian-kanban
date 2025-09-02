@@ -390,11 +390,11 @@ export class StateManager {
         children: {
           $set: lane.children.filter((item) => {
             const isComplete = item.data.checked && item.data.checkChar === getTaskStatusDone();
-            if (lane.data.shouldMarkItemsComplete || isComplete) {
+            if (isComplete) {
               archived.push(item);
             }
 
-            return !isComplete && !lane.data.shouldMarkItemsComplete;
+            return !isComplete;
           }),
         },
       });

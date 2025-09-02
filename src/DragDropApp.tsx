@@ -21,11 +21,6 @@ import {
 import { getBoardModifiers } from './helpers/boardModifiers';
 import KanbanPlugin from './main';
 import { frontmatterKey } from './parsers/common';
-import {
-  getTaskStatusDone,
-  getTaskStatusPreDone,
-  toggleTask,
-} from './parsers/helpers/inlineMetadata';
 
 export function createApp(win: Window, plugin: KanbanPlugin) {
   return <DragDropApp win={win} plugin={plugin} />;
@@ -66,32 +61,8 @@ export function DragDropApp({ win, plugin }: { win: Window; plugin: KanbanPlugin
               });
             }
 
-            // Fallback to original logic
-            const isComplete = !!destinationParent?.data?.shouldMarkItemsComplete;
-
-            if (isComplete) {
-              item = update(item, { data: { checkChar: { $set: getTaskStatusPreDone() } } });
-              const updates = toggleTask(item, stateManager.file);
-              if (updates) {
-                const [itemStrings, checkChars, thisIndex] = updates;
-                const nextItem = itemStrings[thisIndex];
-                const checkChar = checkChars[thisIndex];
-                return stateManager.getNewItem(nextItem, checkChar);
-              }
-            }
-
-            return update(item, {
-              data: {
-                checked: {
-                  $set: !!destinationParent?.data?.shouldMarkItemsComplete,
-                },
-                checkChar: {
-                  $set: destinationParent?.data?.shouldMarkItemsComplete
-                    ? getTaskStatusDone()
-                    : ' ',
-                },
-              },
-            });
+            // No lane-specific checkbox, use default unchecked
+            return item;
           });
 
           return stateManager.setState((board) => insertEntity(board, dropPath, items));

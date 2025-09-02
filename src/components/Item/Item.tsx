@@ -28,20 +28,17 @@ export interface DraggableItemProps {
   item: Item;
   itemIndex: number;
   isStatic?: boolean;
-  shouldMarkItemsComplete?: boolean;
 }
 
 export interface ItemInnerProps {
   item: Item;
   isStatic?: boolean;
-  shouldMarkItemsComplete?: boolean;
   isMatch?: boolean;
   searchQuery?: string;
 }
 
 const ItemInner = memo(function ItemInner({
   item,
-  shouldMarkItemsComplete,
   isMatch,
   searchQuery,
   isStatic,
@@ -120,7 +117,6 @@ const ItemInner = memo(function ItemInner({
           boardModifiers={boardModifiers}
           item={item}
           path={path}
-          shouldMarkItemsComplete={shouldMarkItemsComplete}
           stateManager={stateManager}
         />
         <ItemContent
@@ -184,10 +180,9 @@ export const DraggableItem = memo(function DraggableItem(props: DraggableItemPro
 interface ItemsProps {
   isStatic?: boolean;
   items: Item[];
-  shouldMarkItemsComplete: boolean;
 }
 
-export const Items = memo(function Items({ isStatic, items, shouldMarkItemsComplete }: ItemsProps) {
+export const Items = memo(function Items({ isStatic, items }: ItemsProps) {
   const search = useContext(SearchContext);
   const { view } = useContext(KanbanContext);
   const boardView = view.useViewState(frontmatterKey);
@@ -196,13 +191,7 @@ export const Items = memo(function Items({ isStatic, items, shouldMarkItemsCompl
     <>
       {items.map((item, i) => {
         return search?.query && !search.items.has(item) ? null : (
-          <DraggableItem
-            key={boardView + item.id}
-            item={item}
-            itemIndex={i}
-            shouldMarkItemsComplete={shouldMarkItemsComplete}
-            isStatic={isStatic}
-          />
+          <DraggableItem key={boardView + item.id} item={item} itemIndex={i} isStatic={isStatic} />
         );
       })}
     </>

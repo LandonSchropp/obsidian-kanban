@@ -13,7 +13,6 @@ import { SortPlaceholder } from 'src/dnd/components/SortPlaceholder';
 import { Sortable, StaticSortable } from 'src/dnd/components/Sortable';
 import { useDragHandle } from 'src/dnd/managers/DragManager';
 import { frontmatterKey } from 'src/parsers/common';
-import { getTaskStatusDone } from 'src/parsers/helpers/inlineMetadata';
 
 import { Items } from '../Item/Item';
 import { ItemForm } from '../Item/ItemForm';
@@ -64,7 +63,6 @@ function DraggableLaneRaw({
 
   const bindHandle = useDragHandle(measureRef, dragHandleRef);
 
-  const shouldMarkItemsComplete = !!lane.data.shouldMarkItemsComplete;
   const isCompactPrepend = insertionMethod === 'prepend-compact';
   const shouldPrepend = isCompactPrepend || insertionMethod === 'prepend';
 
@@ -95,17 +93,8 @@ function DraggableLaneRaw({
             });
           }
 
-          // Fallback to original logic
-          return update(item, {
-            data: {
-              checked: {
-                $set: shouldMarkItemsComplete,
-              },
-              checkChar: {
-                $set: shouldMarkItemsComplete ? getTaskStatusDone() : ' ',
-              },
-            },
-          });
+          // No lane-specific checkbox, use default unchecked
+          return item;
         })
       );
 
@@ -202,11 +191,7 @@ function DraggableLaneRaw({
                   triggerTypes={laneAccepts}
                 >
                   <SortableComponent onSortChange={setIsSorting} axis="vertical">
-                    <Items
-                      items={lane.children}
-                      isStatic={isStatic}
-                      shouldMarkItemsComplete={shouldMarkItemsComplete}
-                    />
+                    <Items items={lane.children} isStatic={isStatic} />
                     <SortPlaceholder
                       accepts={laneAccepts}
                       index={lane.children.length}

@@ -12,13 +12,11 @@ import { Item } from '../types';
 interface ItemCheckboxProps {
   path: Path;
   item: Item;
-  shouldMarkItemsComplete: boolean;
   stateManager: StateManager;
   boardModifiers: BoardModifiers;
 }
 
 export const ItemCheckbox = memo(function ItemCheckbox({
-  shouldMarkItemsComplete,
   path,
   item,
   stateManager,
@@ -77,7 +75,7 @@ export const ItemCheckbox = memo(function ItemCheckbox({
     }
   }, [isHoveringCheckbox]);
 
-  if (!(shouldMarkItemsComplete || shouldShowCheckbox)) {
+  if (!shouldShowCheckbox) {
     return null;
   }
 
@@ -109,7 +107,7 @@ export const ItemCheckbox = memo(function ItemCheckbox({
           disabled={true}
         />
       )}
-      {(isCtrlHoveringCheckbox || (!shouldShowCheckbox && shouldMarkItemsComplete)) && (
+      {isCtrlHoveringCheckbox && (
         <a
           onClick={() => {
             boardModifiers.archiveItem(path);

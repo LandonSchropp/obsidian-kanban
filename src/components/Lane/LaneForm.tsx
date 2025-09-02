@@ -1,5 +1,5 @@
 import { EditorView } from '@codemirror/view';
-import { useCallback, useContext, useLayoutEffect, useMemo, useRef, useState } from 'preact/compat';
+import { useCallback, useContext, useLayoutEffect, useMemo, useRef } from 'preact/compat';
 import useOnclickOutside from 'react-cool-onclickoutside';
 import { t } from 'src/lang/helpers';
 import { parseLaneTitle } from 'src/parsers/helpers/parser';
@@ -15,7 +15,6 @@ interface LaneFormProps {
 }
 
 export function LaneForm({ onNewLane, closeLaneForm }: LaneFormProps) {
-  const [shouldMarkAsComplete, setShouldMarkAsComplete] = useState(false);
   const editorRef = useRef<EditorView>();
   const inputRef = useRef<HTMLTextAreaElement>();
   const clickOutsideRef = useOnclickOutside(() => closeLaneForm(), {
@@ -36,7 +35,6 @@ export function LaneForm({ onNewLane, closeLaneForm }: LaneFormProps) {
         children: [],
         data: {
           ...parseLaneTitle(title),
-          shouldMarkItemsComplete: shouldMarkAsComplete,
         },
       });
 
@@ -48,10 +46,9 @@ export function LaneForm({ onNewLane, closeLaneForm }: LaneFormProps) {
         },
       });
 
-      setShouldMarkAsComplete(false);
       onNewLane();
     },
-    [onNewLane, setShouldMarkAsComplete, boardModifiers]
+    [onNewLane, boardModifiers]
   );
 
   const editState = useMemo(() => ({ x: 0, y: 0 }), []);
@@ -79,13 +76,6 @@ export function LaneForm({ onNewLane, closeLaneForm }: LaneFormProps) {
           onEnter={onEnter}
           onEscape={closeLaneForm}
           onSubmit={onSubmit}
-        />
-      </div>
-      <div className={c('checkbox-wrapper')}>
-        <div className={c('checkbox-label')}>{t('Mark cards in this list as complete')}</div>
-        <div
-          onClick={() => setShouldMarkAsComplete(!shouldMarkAsComplete)}
-          className={`checkbox-container ${shouldMarkAsComplete ? 'is-enabled' : ''}`}
         />
       </div>
       <div className={c('lane-input-actions')}>
